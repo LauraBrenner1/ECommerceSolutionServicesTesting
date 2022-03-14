@@ -8,12 +8,21 @@
 
         public OrderSummary ProcessOrder(ShoppingCart order)
         {
+
             var numberOfItems = order.Items.Count;
-            var subTotal = order.Items.Sum(i => i.Qty * i.Price);
-            return new OrderSummary { 
+            if (numberOfItems == 0)
+            {
+                throw new CartCannotBeEmptyException();
+            }
+            var utils = new OrderProcessingUtilities();
+            decimal subTotal = utils.GetSubtotalFromCart(order);
+            return new OrderSummary
+            {
                 NumberOfItems = numberOfItems,
                 SubTotal = subTotal,
             };
         }
+
+        
     }
 }

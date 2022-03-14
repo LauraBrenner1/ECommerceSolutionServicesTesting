@@ -49,4 +49,17 @@ public class ProcessingOrders
         decimal subTotal = summary.SubTotal;
         Assert.Equal(31.99M, subTotal);
     }
+
+    [Fact]
+    public void EmptyBasketCannotBeProcessed()
+    {
+        // Given
+        var orderProcessor = new OrderProcessor();
+
+        var order = new ShoppingCart();
+
+        // When/Then
+
+        Assert.Throws<CartCannotBeEmptyException>(() => orderProcessor.ProcessOrder(order));
+    }
 }
