@@ -29,4 +29,24 @@ public class ProcessingOrders
         Assert.Equal(2, summary.NumberOfItems);
 
     }
+    [Fact]
+    public void CalculatesSubtotal()
+    {
+        var orderProcessor = new OrderProcessor();
+
+        var order = new ShoppingCart
+        {
+            Items = new List<ShoppingCartItem>
+            {
+                new ShoppingCartItem() { Qty = 1, Price=1.99M},
+                new ShoppingCartItem() { Qty = 3, Price=10.00M}
+            }
+        };
+        // When
+        OrderSummary summary = orderProcessor.ProcessOrder(order);
+
+
+        decimal subTotal = summary.SubTotal;
+        Assert.Equal(31.99M, subTotal);
+    }
 }
