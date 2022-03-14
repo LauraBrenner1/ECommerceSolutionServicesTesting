@@ -1,6 +1,6 @@
 ﻿namespace ECommerce
 {
-    public class SalesTaxCalculator
+    public class SalesTaxCalculator : ICalculateSalesTaxForOrders
     {
         public SalesTaxCalculator()
         {
@@ -10,12 +10,17 @@
         {
            if(zipCode == "44107")
             {
-                return amountOfSale * .072M;
+                return amountOfSale * .07M;
             } else
             {
                 return amountOfSale * .10M;
             }
             
+        }
+
+        public decimal GetTaxForOrder(decimal subTotal, string zipCode)
+        {
+           return CalculateSalesTaxOnAmount(subTotal, zipCode);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿global using Xunit;
+global using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ public class ProcessingOrders
     public void CanGiveMeATotalNumberOfItems()
     {
         // Given
-        var orderProcessor = new OrderProcessor();
+        // This is a dummy that we created.
+        var orderProcessor = new OrderProcessor(new TestDoubles.DummySalesTaxCalculator(), new Mock<IDealWithCustomerLoyalty>().Object);
 
         var order = new ShoppingCart
         {
@@ -32,7 +34,8 @@ public class ProcessingOrders
     [Fact]
     public void CalculatesSubtotal()
     {
-        var orderProcessor = new OrderProcessor();
+        // This is a dummy created using Moq. It does the same thing we did above, but with less code.
+        var orderProcessor = new OrderProcessor(new Mock<ICalculateSalesTaxForOrders>().Object, new Mock<IDealWithCustomerLoyalty>().Object);
 
         var order = new ShoppingCart
         {
@@ -54,7 +57,7 @@ public class ProcessingOrders
     public void EmptyBasketCannotBeProcessed()
     {
         // Given
-        var orderProcessor = new OrderProcessor();
+        var orderProcessor = new OrderProcessor(new Mock<ICalculateSalesTaxForOrders>().Object, new Mock<IDealWithCustomerLoyalty>().Object);
 
         var order = new ShoppingCart();
 
@@ -66,7 +69,14 @@ public class ProcessingOrders
     [Fact]
     public void HasCorrectTaxAndTotal()
     {
-        var orderProcessor = new OrderProcessor();
+        // Set a trap:
+        // - IF you get called with the right total, and the right zip code, return $99.99, otherwise return 0.
+        var stubbedTaxCalculator = new Mock<ICalculateSalesTaxForOrders>();
+        stubbedTaxCalculator.Setup(c => c.GetTaxForOrder(31.99M, "44107")).Returns(99.99M);
+
+        // otherwise, I'm a dummy. (return 0).
+
+        var orderProcessor = new OrderProcessor(stubbedTaxCalculator.Object, new Mock<IDealWithCustomerLoyalty>().Object);
 
         var order = new ShoppingCart
         {
@@ -80,13 +90,14 @@ public class ProcessingOrders
         };
         // When
         OrderSummary summary = orderProcessor.ProcessOrder(order);
-
+        // Our order processory passed the right arguments to the tax calculator, and used the value returned
+        // as the tax.
 
         decimal subTotal = summary.SubTotal;
         decimal tax = summary.SalesTax;
         decimal total = summary.Total;
-         Assert.Equal(31.99M, subTotal);
-        Assert.Equal(2.2393M, tax);
-        Assert.Equal(31.99M + 2.2393M, total);
+        Assert.Equal(31.99M, subTotal);
+        Assert.Equal(99.99M, tax);
+        Assert.Equal(31.99M + 99.99M, total);
     }
 }
