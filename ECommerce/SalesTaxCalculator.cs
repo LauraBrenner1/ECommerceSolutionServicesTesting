@@ -10,7 +10,7 @@
         {
            if(zipCode == "44107")
             {
-                return amountOfSale * .07M;
+                return amountOfSale * .072M;
             } else
             {
                 return amountOfSale * .10M;

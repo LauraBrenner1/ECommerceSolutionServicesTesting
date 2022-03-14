@@ -62,4 +62,31 @@ public class ProcessingOrders
 
         Assert.Throws<CartCannotBeEmptyException>(() => orderProcessor.ProcessOrder(order));
     }
+
+    [Fact]
+    public void HasCorrectTaxAndTotal()
+    {
+        var orderProcessor = new OrderProcessor();
+
+        var order = new ShoppingCart
+        {
+            ZipCode = "44107",
+
+            Items = new List<ShoppingCartItem>
+            {
+                new ShoppingCartItem() { Qty = 1, Price=1.99M},
+                new ShoppingCartItem() { Qty = 3, Price=10.00M}
+            }
+        };
+        // When
+        OrderSummary summary = orderProcessor.ProcessOrder(order);
+
+
+        decimal subTotal = summary.SubTotal;
+        decimal tax = summary.SalesTax;
+        decimal total = summary.Total;
+         Assert.Equal(31.99M, subTotal);
+        Assert.Equal(2.2393M, tax);
+        Assert.Equal(31.99M + 2.2393M, total);
+    }
 }

@@ -16,10 +16,15 @@
             }
             var utils = new OrderProcessingUtilities();
             decimal subTotal = utils.GetSubtotalFromCart(order);
+
+            var salesTax = new SalesTaxCalculator();
+            decimal tax = salesTax.CalculateSalesTaxOnAmount(subTotal, order.ZipCode);
             return new OrderSummary
             {
                 NumberOfItems = numberOfItems,
                 SubTotal = subTotal,
+                SalesTax = tax,
+                Total = subTotal + tax
             };
         }
 
