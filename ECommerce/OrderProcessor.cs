@@ -26,10 +26,12 @@
             decimal tax = _salesTaxCalculator.GetTaxForOrder(subTotal, order.ZipCode);
 
             // Orders with a total over $100 get a thank you card.
-            if(subTotal > 100)
+            if (subTotal >= 100)
             {
                 _customerLoyalty.SendLargeOrderThankYou(order.EmailAddress);
-            }
+             }
+
+          
             return new OrderSummary
             {
                 NumberOfItems = numberOfItems,
