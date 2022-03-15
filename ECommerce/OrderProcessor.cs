@@ -28,6 +28,7 @@
             // Orders with a total over $100 get a thank you card.
             if (subTotal >= 100)
             {
+                // Tell don't ask
                 _customerLoyalty.SendLargeOrderThankYou(order.EmailAddress);
              }
 

@@ -10,7 +10,7 @@ namespace ECommerce
     {
         public decimal GetSubtotalFromCart(ShoppingCart order)
         {
-            return order.Items.Sum(i => i.Qty * (i.Price) );
+            return order.Items.Sum(i => i.GetTotal());
         }
     }
 }
